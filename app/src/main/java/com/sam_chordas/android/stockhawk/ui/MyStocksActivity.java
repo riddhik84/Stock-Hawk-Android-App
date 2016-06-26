@@ -61,6 +61,14 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     boolean isConnected;
     TextView emptyView;
 
+    final String[] QUOTES_COLUMNS = {
+            QuoteColumns._ID,
+            QuoteColumns.SYMBOL,
+            QuoteColumns.BIDPRICE
+    };
+
+    String symbol = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,11 +100,22 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     @Override
                     public void onItemClick(View v, int position) {
                         // do something on item click
-                        Toast.makeText(mContext, "This is at position " +position, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "This is at position " + position, Toast.LENGTH_SHORT).show();
 
-                        Intent detailScreen = new Intent(mContext, StockDetailsActivity.class);
-                        detailScreen.putExtra("symbol", position+"");
-                        startActivity(detailScreen);
+                        mCursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI, QUOTES_COLUMNS,
+                                QuoteColumns._ID + "=?", new String[]{position + ""}, null);
+                        if (mCursor != null && mCursor.getCount() > 0) {
+                            //mCursor.moveToPosition(position);
+                            mCursor.moveToLast();
+                            symbol = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL));
+
+                            Intent detailScreen = new Intent(mContext, StockDetailsActivity.class);
+                            detailScreen.putExtra("symbol", symbol);
+
+                            startActivity(detailScreen);
+                        } else {
+                            Toast.makeText(MyStocksActivity.this, "No Data available!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }));
 

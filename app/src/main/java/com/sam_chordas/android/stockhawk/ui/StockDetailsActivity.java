@@ -42,23 +42,27 @@ public class StockDetailsActivity extends Activity {
         TextView textViewQuoteName = (TextView) findViewById(R.id.quote_name);
 
         Intent intent = getIntent();
-        String position = intent.getStringExtra("symbol");
-        Log.d(LOG_TAG, "rkakadia Symbol got: " + position);
-        Integer dbPosition = Integer.parseInt(position);
-        dbPosition = dbPosition + 1;
+        String symbol = intent.getStringExtra("symbol");
+        Log.d(LOG_TAG, "rkakadia Symbol got: " + symbol);
+//        Integer dbPosition = Integer.parseInt(position);
+//        dbPosition = dbPosition + 1;
 
-        Cursor cursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI, QUOTES_COLUMNS,
-                QuoteColumns._ID + "=?", new String[]{dbPosition+""}, null);
+//        Cursor cursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI, QUOTES_COLUMNS,
+//                QuoteColumns._ID + "=?", new String[]{dbPosition+""}, null);
 
-        if (cursor != null && cursor.getCount() > 0) {
-            //cursor.moveToFirst();
-            cursor.moveToPosition(dbPosition);
-            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
-            symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
-            Log.d(LOG_TAG, "rkakdia Symbol clicked is " + symbol);
+//        if (cursor != null && cursor.getCount() > 0) {
+//            //cursor.moveToFirst();
+//            cursor.moveToPosition(dbPosition);
+//            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
+//            //symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
+//            Log.d(LOG_TAG, "rkakdia Symbol clicked is " + symbol);
+//            textViewQuoteName.setText(symbol);
+//        } else {
+//            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
+//        }
+
+        if(symbol != null && symbol.length() > 0){
             textViewQuoteName.setText(symbol);
-        } else {
-            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
         }
         //cursor.close();
 
