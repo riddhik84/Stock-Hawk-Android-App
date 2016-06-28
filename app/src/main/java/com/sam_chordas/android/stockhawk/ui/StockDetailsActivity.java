@@ -1,37 +1,49 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.sync.HttpRequestResponse;
+import com.sam_chordas.android.stockhawk.sync.StockHistoryParcelable;
 
-import org.w3c.dom.Text;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class StockDetailsActivity extends Activity {
 
     final static String LOG_TAG = StockDetailsActivity.class.getSimpleName();
-    String symbol;
+    LineChart lineChart;
+    TextView quoteNameTV;
+    TextView companyNameTV;
+    TextView prevClosePriceTV;
 
-    final String[] QUOTES_COLUMNS = {
-            QuoteColumns._ID,
-            QuoteColumns.SYMBOL,
-            QuoteColumns.BIDPRICE
-    };
+    String symbol = "";
+    String companyName = "";
+    String prevClosePrice = "";
+    String currency = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,93 +51,186 @@ public class StockDetailsActivity extends Activity {
         setContentView(R.layout.activity_stock_details);
 //        getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView textViewQuoteName = (TextView) findViewById(R.id.quote_name);
+        quoteNameTV = (TextView) findViewById(R.id.quote_name);
+        companyNameTV = (TextView) findViewById(R.id.company_name);
+        prevClosePriceTV = (TextView) findViewById(R.id.prev_close_price);
 
         Intent intent = getIntent();
-        String symbol = intent.getStringExtra("symbol");
-        Log.d(LOG_TAG, "rkakadia Symbol got: " + symbol);
-//        Integer dbPosition = Integer.parseInt(position);
-//        dbPosition = dbPosition + 1;
+        //int position = intent.getIntExtra("position", 0);
+        symbol = intent.getStringExtra("symbol");
+        Log.d(LOG_TAG, "rkakadia position received in stockdetails : " + symbol);
 
-//        Cursor cursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI, QUOTES_COLUMNS,
-//                QuoteColumns._ID + "=?", new String[]{dbPosition+""}, null);
+        if (symbol != null) {
+            quoteNameTV.setText(symbol);
+        }
 
-//        if (cursor != null && cursor.getCount() > 0) {
-//            //cursor.moveToFirst();
-//            cursor.moveToPosition(dbPosition);
-//            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
-//            //symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
-//            Log.d(LOG_TAG, "rkakdia Symbol clicked is " + symbol);
-//            textViewQuoteName.setText(symbol);
-//        } else {
-//            Log.d(LOG_TAG, "rkakadia cursor count is " + cursor.getCount());
+        StockAsyncTask s = new StockAsyncTask(this);
+        s.execute(symbol);
+    }
+
+    //Format date
+    public String formatDate(String dateData) {
+        //Sample date: 20160428
+        //Convert to: 2016-04-28
+        StringBuilder sb = new StringBuilder(dateData);
+        sb.insert(4, '-');
+        sb.insert(7, '-');
+        return sb.toString();
+    }
+
+    //Fetch stock data AsyncTask
+    class StockAsyncTask extends AsyncTask<String, Void, ArrayList<StockHistoryParcelable>> {
+
+        private final String LOG_TAG = StockAsyncTask.class.getSimpleName();
+
+        final Context mContext;
+
+        public StockAsyncTask(Context context) {
+            mContext = context;
+        }
+
+        private ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setMessage("Loading chart...");
+            pDialog.show();
+        }
+
+        @Override
+        protected ArrayList<StockHistoryParcelable> doInBackground(String... params) {
+            Log.d(LOG_TAG, "rkakadia inside doInBackground() method");
+            ArrayList<StockHistoryParcelable> ArrayList_SHP = new ArrayList<>();
+
+            if (params.length == 0) {
+                return null;
+            }
+
+            final String YAHOO_URL = "http://chartapi.finance.yahoo.com/instrument/1.0/";
+            final String CHART_DATA_URL = "/chartdata;type=quote;range=1y/json";
+
+            String stock_quote = params[0];
+
+            String jsonResponse = "";
+
+            try {
+
+                String query = YAHOO_URL + stock_quote + CHART_DATA_URL;
+                Log.d(LOG_TAG, "rkakadia Stock query = " + query);
+
+                URL stockUrl = new URL(query);
+                Log.d(LOG_TAG, "rkakadia Stock URL = " + stockUrl.toString());
+
+                //Request/Response
+                HttpRequestResponse hrr = new HttpRequestResponse();
+                jsonResponse = hrr.doGetRequest(stockUrl.toString());
+                Log.d(LOG_TAG, "rkakadia json response: " + jsonResponse);
+
+                //Get data from Json and insert it in table
+                ArrayList_SHP = getStockdataFromJson(jsonResponse);
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "IOException ", e);
+                return null;
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "JSON Exception", e);
+                return null;
+            } finally {
+
+            }
+            return ArrayList_SHP;
+        }
+
+        public ArrayList<StockHistoryParcelable> getStockdataFromJson(String jsonResponseString) throws JSONException {
+            Log.d(LOG_TAG, "rkakadia inside getStockdataFromJson() method");
+            ArrayList<StockHistoryParcelable> ArrayList_SHB = new ArrayList<>();
+
+            if (jsonResponseString != null && jsonResponseString.length() > 1) {
+                Log.d(LOG_TAG, "rkakadia jsonResponseString len " + jsonResponseString.length());
+
+                final String MAIN_TAG = "finance_charts_json_callback";
+                final String SERIES = "series";
+                final String DATE = "Date";
+                final String CLOSE = "close";
+
+                final String META = "meta";
+                final String COMPANY_NAME = "Company-Name";
+                final String PREV_CLOSE_PRICE = "previous_close_price";
+                final String CURRENCY = "currency";
+
+                String json_string = jsonResponseString.substring(jsonResponseString.indexOf("(") + 1, jsonResponseString.lastIndexOf(")"));
+                JSONObject in = new JSONObject(json_string);
+
+                JSONObject meta = in.getJSONObject(META);
+                companyName = meta.getString(COMPANY_NAME);
+                Log.d(LOG_TAG, "rkakadia company name: " + companyName);
+
+                prevClosePrice = meta.getString(PREV_CLOSE_PRICE);
+                Log.d(LOG_TAG, "rkakadia previous close price: " + prevClosePrice);
+
+                currency = meta.getString(CURRENCY);
+                Log.d(LOG_TAG, "rkakadia currency: " + currency);
+
+                JSONArray stockArray = in.getJSONArray(SERIES);
+                Log.d(LOG_TAG, "rkakadia JSON array length " + stockArray.length());
+
+                for (int i = 0; i < stockArray.length(); i += 30) {
+                    JSONObject stockEntry = stockArray.getJSONObject(i);
+                    String date = stockEntry.getString(DATE);
+                    double close = stockEntry.getDouble(CLOSE);
+                    ArrayList_SHB.add(new StockHistoryParcelable(date, close));
+                }
+            }
+            return ArrayList_SHB;
+        }
+
+//        protected void onProgressUpdate(Integer... progress) {
+//            pDialog.show();
 //        }
 
-        if(symbol != null && symbol.length() > 0){
-            textViewQuoteName.setText(symbol);
+        protected void onPostExecute(ArrayList<StockHistoryParcelable> SHP) {
+            Log.d(LOG_TAG, "Inside  onPostExecute ");
+            super.onPostExecute(SHP);
+
+            companyNameTV.setText(companyNameTV.getText() + " " + companyName);
+            prevClosePriceTV.setText(prevClosePriceTV.getText() + " " + prevClosePrice + " " + currency);
+
+            ArrayList<StockHistoryParcelable> ArrayList_SHB = new ArrayList<>();
+            ArrayList_SHB = SHP;
+
+            ArrayList<Entry> entries = new ArrayList<>();
+            ArrayList<String> labels = new ArrayList<>();
+
+            for (int i = 0; i < ArrayList_SHB.size(); i++) {
+
+                StockHistoryParcelable stockParcel = ArrayList_SHB.get(i);
+                String dateValue = formatDate(stockParcel.date);
+                //String dateValue = stockParcel.date;
+                Log.d(LOG_TAG, "rkakadia dateValue " + dateValue);
+                double closeValue = stockParcel.close;
+                Log.d(LOG_TAG, "rkakadia closeValue " + closeValue);
+
+                entries.add(new Entry((float) closeValue, i));
+                labels.add(dateValue);
+            }
+
+            LineDataSet dataset = new LineDataSet(entries, "Close Values");
+            dataset.setDrawCubic(true);
+            dataset.setDrawFilled(true);
+            dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+            LineData data = new LineData(labels, dataset);
+
+            pDialog.dismiss();
+            lineChart = (LineChart) findViewById(R.id.linechart);
+            lineChart.setDescription("LineChart for " + companyName);
+            lineChart.setData(data);
+            lineChart.animate();
+            lineChart.invalidate();
+
+            Log.d(LOG_TAG, "rkakadia End of execution...");
         }
-        //cursor.close();
-
-        //BarChart
-        BarChart barChart = (BarChart) findViewById(R.id.barchart);
-
-        BarData data = new BarData(getXAxisValues(), getDataSet());
-        barChart.setData(data);
-        barChart.setDescription("My Chart");
-        barChart.animateXY(2000, 2000);
-        barChart.invalidate();
     }
 
-    private ArrayList<IBarDataSet> getDataSet() {
-        ArrayList<IBarDataSet> dataSets = null;
-
-        ArrayList<BarEntry> valueSet1 = new ArrayList<>();
-        BarEntry v1e1 = new BarEntry(110.000f, 0); // Jan
-        valueSet1.add(v1e1);
-        BarEntry v1e2 = new BarEntry(40.000f, 1); // Feb
-        valueSet1.add(v1e2);
-        BarEntry v1e3 = new BarEntry(60.000f, 2); // Mar
-        valueSet1.add(v1e3);
-        BarEntry v1e4 = new BarEntry(30.000f, 3); // Apr
-        valueSet1.add(v1e4);
-        BarEntry v1e5 = new BarEntry(90.000f, 4); // May
-        valueSet1.add(v1e5);
-        BarEntry v1e6 = new BarEntry(100.000f, 5); // Jun
-        valueSet1.add(v1e6);
-
-        ArrayList<BarEntry> valueSet2 = new ArrayList<>();
-        BarEntry v2e1 = new BarEntry(150.000f, 0); // Jan
-        valueSet2.add(v2e1);
-        BarEntry v2e2 = new BarEntry(90.000f, 1); // Feb
-        valueSet2.add(v2e2);
-        BarEntry v2e3 = new BarEntry(120.000f, 2); // Mar
-        valueSet2.add(v2e3);
-        BarEntry v2e4 = new BarEntry(60.000f, 3); // Apr
-        valueSet2.add(v2e4);
-        BarEntry v2e5 = new BarEntry(20.000f, 4); // May
-        valueSet2.add(v2e5);
-        BarEntry v2e6 = new BarEntry(80.000f, 5); // Jun
-        valueSet2.add(v2e6);
-
-        BarDataSet barDataSet1 = new BarDataSet(valueSet1, "Brand 1");
-        barDataSet1.setColor(Color.rgb(0, 155, 0));
-        BarDataSet barDataSet2 = new BarDataSet(valueSet2, "Brand 2");
-        barDataSet2.setColors(ColorTemplate.COLORFUL_COLORS);
-
-        dataSets = new ArrayList<>();
-        dataSets.add(barDataSet1);
-        dataSets.add(barDataSet2);
-        return dataSets;
-    }
-
-    private ArrayList<String> getXAxisValues() {
-        ArrayList<String> xAxis = new ArrayList<>();
-        xAxis.add("JAN");
-        xAxis.add("FEB");
-        xAxis.add("MAR");
-        xAxis.add("APR");
-        xAxis.add("MAY");
-        xAxis.add("JUN");
-        return xAxis;
-    }
 }

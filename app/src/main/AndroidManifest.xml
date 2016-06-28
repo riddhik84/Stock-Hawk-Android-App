@@ -42,6 +42,10 @@
             android:authorities="com.sam_chordas.android.stockhawk.data.QuoteProvider"
             android:exported="false" />
 
+        <!-- SyncAdapter's dummy authentication service -->
+
+        <!-- The SyncAdapter service -->
+
         <activity
             android:name=".ui.StockDetailsActivity"
             android:label="@string/title_activity_stock_details"

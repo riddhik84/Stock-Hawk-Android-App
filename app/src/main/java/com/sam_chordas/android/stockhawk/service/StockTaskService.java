@@ -69,11 +69,16 @@ public class StockTaskService extends GcmTaskService {
         }
         if (params.getTag().equals("init") || params.getTag().equals("periodic")) {
             isUpdate = true;
+            //delete existing data
+            mContext.getContentResolver().delete(QuoteProvider.Quotes.CONTENT_URI,
+                    null, null);
+
             initQueryCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                     new String[]{"Distinct " + QuoteColumns.SYMBOL}, null,
                     null, null);
             if (initQueryCursor.getCount() == 0 || initQueryCursor == null) {
                 // Init task. Populates DB with quotes for the symbols seen below
+                Log.d(LOG_TAG, "rkakadia No data in table Quotes");
                 try {
                     urlStringBuilder.append(
                             URLEncoder.encode("\"YHOO\",\"AAPL\",\"GOOG\",\"MSFT\")", "UTF-8"));

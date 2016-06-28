@@ -10,20 +10,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sam_chordas.android.stockhawk.ui.StockDetailsActivity">
 
-    <TextView
-        android:id="@+id/quote_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/material_green_700"
-        android:textSize="20dp" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barchart"
+    <LinearLayout
+        android:id="@+id/layout_1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/quote_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/material_green_700"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/material_green_700"
+            android:textSize="14dp"
+            android:text="@string/company_name_text"/>
+
+        <TextView
+            android:id="@+id/prev_close_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/material_green_700"
+            android:textSize="14dp"
+            android:text="@string/prev_close_price_text"/>
+
+    </LinearLayout>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/linechart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2" />
 
 </LinearLayout>

@@ -58,16 +58,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
     private Cursor mCursor;
-    boolean isConnected;
+    //boolean isConnected;
     TextView emptyView;
-
-    final String[] QUOTES_COLUMNS = {
-            QuoteColumns._ID,
-            QuoteColumns.SYMBOL,
-            QuoteColumns.BIDPRICE
-    };
-
-    String symbol = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,21 +92,11 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     @Override
                     public void onItemClick(View v, int position) {
                         // do something on item click
-                        Toast.makeText(mContext, "This is at position " + position, Toast.LENGTH_SHORT).show();
-
-                        mCursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI, QUOTES_COLUMNS,
-                                QuoteColumns._ID + "=?", new String[]{position + ""}, null);
-                        if (mCursor != null && mCursor.getCount() > 0) {
-                            //mCursor.moveToPosition(position);
-                            mCursor.moveToLast();
-                            symbol = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL));
-
-                            Intent detailScreen = new Intent(mContext, StockDetailsActivity.class);
-                            detailScreen.putExtra("symbol", symbol);
-
-                            startActivity(detailScreen);
-                        } else {
-                            Toast.makeText(MyStocksActivity.this, "No Data available!", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext, "This is at position " + position, Toast.LENGTH_SHORT).show();
+                        if (mCursor.moveToPosition(position)) {
+                            Intent stockDetailScreen = new Intent(mContext, StockDetailsActivity.class);
+                            stockDetailScreen.putExtra("symbol", mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL)));
+                            startActivity(stockDetailScreen);
                         }
                     }
                 }));
@@ -148,6 +130,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                             new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
                                             new String[]{input.toString().toUpperCase()}, null);
                                     if (c.getCount() != 0) {
+                                        Log.d(LOG_TAG, "rkakadia stock quote exists? " + c.getCount());
                                         Toast toast =
                                                 Toast.makeText(MyStocksActivity.this, getString(R.string.stock_already_saved_toast),
                                                         Toast.LENGTH_LONG);
@@ -157,7 +140,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                     } else {
                                         // Add the stock to DB
                                         mServiceIntent.putExtra("tag", "add");
-                                        mServiceIntent.putExtra("symbol", input.toString());
+                                        mServiceIntent.putExtra("symbol", input.toString().toUpperCase());
                                         startService(mServiceIntent);
                                     }
                                 }
@@ -167,7 +150,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     //networkToast();
                     updateEmptyView();
                 }
-
             }
         });
 
@@ -176,7 +158,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mItemTouchHelper.attachToRecyclerView(recyclerView);
 
         mTitle = getTitle();
-        if (isConnected) {
+        if (isNetworkConnected()) {
             long period = 3600L;
             long flex = 10L;
             String periodicTag = "periodic";

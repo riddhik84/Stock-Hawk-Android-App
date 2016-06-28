@@ -18,4 +18,13 @@
     <string name="network_info_dialog_title">Network Info</string>
     <string name="no_network_info">No network available! Please connect to the network.</string>
     <string name="no_quotes_info">No stock quotes added.</string>
+
+    <string name="content_authority">com.sam_chordas.android.stockhawk</string>
+    <string name="sync_account_type">stocks.rk.com</string>
+
+    <string name="company_name_text">Company Name:</string>
+    <string name="prev_close_price_text">Previous Close Price:</string>
+
+
+
 </resources>
