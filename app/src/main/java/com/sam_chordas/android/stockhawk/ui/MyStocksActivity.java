@@ -84,7 +84,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
             mServiceIntent.putExtra("tag", "init");
-            if (Utils.isNetworkConnected()) {
+            if (Utils.isNetworkConnected(this)) {
                 Log.d(LOG_TAG, "rkakadia  network is connected");
                 startService(mServiceIntent);
             } else {
@@ -127,7 +127,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isNetworkConnected()) {
+                if (Utils.isNetworkConnected(getApplicationContext())) {
                     new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
                             .content(R.string.content_test)
                             .itemsGravity(GravityEnum.START)
@@ -170,7 +170,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mItemTouchHelper.attachToRecyclerView(recyclerView);
 
         mTitle = getTitle();
-        if (Utils.isNetworkConnected()) {
+        if (Utils.isNetworkConnected(this)) {
             long period = 3600L;
             long flex = 10L;
             String periodicTag = "periodic";
@@ -266,7 +266,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 .content(getString(R.string.no_network_info))
                 .cancelable(true);
 
-        if (Utils.isNetworkConnected() == false) {
+        if (Utils.isNetworkConnected(this) == false) {
             if (mCursorAdapter.getItemCount() == 0) {
                 //emptyView.setText("No network available");
                 //emptyView.setVisibility(View.VISIBLE);

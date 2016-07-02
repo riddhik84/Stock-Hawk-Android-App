@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.widget;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -7,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
@@ -52,11 +54,17 @@ public class StockWidgetProvider extends AppWidgetProvider {
 
         for (int i = 0; i < appWidgetIDs.length; i++) {
 
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+
+            // Create an Intent to launch MainActivity
+            Intent intentMain = new Intent(context, MyStocksActivity.class);
+            PendingIntent pendingIntentMain = PendingIntent.getActivity(context, 0, intentMain, 0);
+            views.setOnClickPendingIntent(R.id.widget_header_frame, pendingIntentMain);
+
             Intent intent = new Intent(context, StockWidgetIntentService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIDs[i]);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
             views.setRemoteAdapter(appWidgetIDs[i], R.id.widget_list_view, intent);
             views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
 
@@ -83,5 +91,27 @@ public class StockWidgetProvider extends AppWidgetProvider {
 
             appWidgetManager.updateAppWidget(appWidgetIDs[i], views);
         }
+    }
+
+    /**
+     * Sets the remote adapter used to fill in the list items
+     *
+     * @param views RemoteViews to set the RemoteAdapter
+     */
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
+        views.setRemoteAdapter(R.id.widget_list_view,
+                new Intent(context, StockWidgetIntentService.class));
+    }
+
+    /**
+     * Sets the remote adapter used to fill in the list items
+     *
+     * @param views RemoteViews to set the RemoteAdapter
+     */
+    @SuppressWarnings("deprecation")
+    private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
+        views.setRemoteAdapter(0, R.id.widget_list_view,
+                new Intent(context, StockWidgetIntentService.class));
     }
 }
