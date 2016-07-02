@@ -1,14 +1,17 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -31,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StockDetailsActivity extends Activity {
 
@@ -50,6 +54,8 @@ public class StockDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_details);
 //        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+//        forceRTLIfSupported();
 
         quoteNameTV = (TextView) findViewById(R.id.quote_name);
         companyNameTV = (TextView) findViewById(R.id.company_name);
@@ -230,6 +236,15 @@ public class StockDetailsActivity extends Activity {
             lineChart.invalidate();
 
             Log.d(LOG_TAG, "rkakadia End of execution...");
+        }
+    }
+
+    //RTL language support
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void forceRTLIfSupported() {
+        Log.d(LOG_TAG, "rkakadia forceRTLIfSupported()");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
     }
 

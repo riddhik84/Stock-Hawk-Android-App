@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <style name="BidPriceTextStyle">
+                <item name="android:textSize">20sp</item>
+                <item name="android:paddingStart">@dimen/padding_bid_price</item>
+                <item name="android:paddingEnd">@dimen/padding_bid_price</item>
+                <item name="android:paddingLeft">@dimen/padding_bid_price</item>
+                <item name="android:paddingRight">@dimen/padding_bid_price</item>
+        </style>
+
+        <style name="PercentChangeTextStyle">
+                <item name="android:textSize">20sp</item>
+                <item name="android:paddingRight">@dimen/padding_price_change</item>
+                <item name="android:paddingLeft">@dimen/padding_price_change</item>
+                <item name="android:paddingStart">@dimen/padding_price_change</item>
+                <item name="android:paddingEnd">@dimen/padding_price_change</item>
+        </style>
+</resources>

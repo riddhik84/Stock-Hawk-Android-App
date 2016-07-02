@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stock Hawk</string>
 
     <string name="action_example">Example action</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings" translatable="true">Settings</string>
     <string name="action_change_units">Change Units</string>
     <string name="symbol_search">Symbol Search</string>
     <string name="content_test">Search for a Stock Symbol</string>
@@ -24,7 +25,5 @@
 
     <string name="company_name_text">Company Name:</string>
     <string name="prev_close_price_text">Previous Close Price:</string>
-
-
 
 </resources>

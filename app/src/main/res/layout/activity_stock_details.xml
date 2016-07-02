@@ -5,11 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sam_chordas.android.stockhawk.ui.StockDetailsActivity">
-
 
     <LinearLayout
         android:id="@+id/layout_1"
@@ -22,7 +23,7 @@
             android:id="@+id/quote_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/material_green_700"
@@ -32,23 +33,23 @@
             android:id="@+id/company_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:text="@string/company_name_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp"
-            android:text="@string/company_name_text"/>
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/prev_close_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:text="@string/prev_close_price_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp"
-            android:text="@string/prev_close_price_text"/>
+            android:textSize="14dp" />
 
     </LinearLayout>
 

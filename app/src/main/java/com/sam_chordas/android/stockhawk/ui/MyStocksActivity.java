@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -8,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -40,9 +43,13 @@ import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallb
 
 import org.w3c.dom.Text;
 
+import java.util.Locale;
+
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     final static String LOG_TAG = MyStocksActivity.class.getSimpleName();
+
+    public static final String ACTION_DATA_UPDATE = "com.sam_chordas.android.stockhawk.ACTION_DATA_UPDATE";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -67,13 +74,17 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mContext = this;
 
         setContentView(R.layout.activity_my_stocks);
+//        support RTL
+//        String locale = Locale.getDefault().getDisplayLanguage();
+//        Log.d(LOG_TAG, "rkakadia locale: " + locale);
+
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
         mServiceIntent = new Intent(this, StockIntentService.class);
         if (savedInstanceState == null) {
             // Run the initialize task service so that some stocks appear upon an empty database
             mServiceIntent.putExtra("tag", "init");
-            if (isNetworkConnected()) {
+            if (Utils.isNetworkConnected()) {
                 Log.d(LOG_TAG, "rkakadia  network is connected");
                 startService(mServiceIntent);
             } else {
@@ -116,9 +127,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNetworkConnected()) {
+                if (Utils.isNetworkConnected()) {
                     new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
                             .content(R.string.content_test)
+                            .itemsGravity(GravityEnum.START)
                             .inputType(InputType.TYPE_CLASS_TEXT)
                             .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
                                 @Override
@@ -158,7 +170,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mItemTouchHelper.attachToRecyclerView(recyclerView);
 
         mTitle = getTitle();
-        if (isNetworkConnected()) {
+        if (Utils.isNetworkConnected()) {
             long period = 3600L;
             long flex = 10L;
             String periodicTag = "periodic";
@@ -247,13 +259,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mCursorAdapter.swapCursor(null);
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return (activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting());
-    }
-
     public void updateEmptyView() {
         emptyView = (TextView) findViewById(R.id.empty_view);
         MaterialDialog.Builder materialDialog = new MaterialDialog.Builder(mContext);
@@ -261,7 +266,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 .content(getString(R.string.no_network_info))
                 .cancelable(true);
 
-        if (isNetworkConnected() == false) {
+        if (Utils.isNetworkConnected() == false) {
             if (mCursorAdapter.getItemCount() == 0) {
                 //emptyView.setText("No network available");
                 //emptyView.setVisibility(View.VISIBLE);
@@ -278,6 +283,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             } else {
                 emptyView.setVisibility(View.GONE);
             }
+        }
+    }
+
+    //RTL language support
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void forceRTLIfSupported() {
+        Log.d(LOG_TAG, "rkakadia forceRTLIfSupported()");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
     }
 

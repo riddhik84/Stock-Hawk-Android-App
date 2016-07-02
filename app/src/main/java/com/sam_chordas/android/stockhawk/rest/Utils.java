@@ -1,8 +1,13 @@
 package com.sam_chordas.android.stockhawk.rest;
 
+import android.annotation.TargetApi;
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -22,7 +27,14 @@ public class Utils {
     private static String LOG_TAG = Utils.class.getSimpleName();
 
     public static boolean showPercent = true;
-    Context mContext;
+    static Context mContext;
+
+    public static boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return (activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting());
+    }
 
     public static ArrayList quoteJsonToContentVals(String JSON) {
         Log.d(LOG_TAG, "rkakadia JSON String: " + JSON);
@@ -67,7 +79,7 @@ public class Utils {
     }
 
     public static String truncateBidPrice(String bidPrice) {
-        Log.d(LOG_TAG, "rkakadia bidprice: "+bidPrice);
+        Log.d(LOG_TAG, "rkakadia bidprice: " + bidPrice);
 
         if (bidPrice != null)
             bidPrice = String.format("%.2f", Float.parseFloat(bidPrice));

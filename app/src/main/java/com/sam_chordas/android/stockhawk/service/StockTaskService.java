@@ -3,6 +3,7 @@ package com.sam_chordas.android.stockhawk.service;
 import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -15,6 +16,7 @@ import com.google.android.gms.gcm.TaskParams;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
+import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -35,6 +37,9 @@ public class StockTaskService extends GcmTaskService {
     private Context mContext;
     private StringBuilder mStoredSymbols = new StringBuilder();
     private boolean isUpdate;
+
+    public static final String ACTION_DATA_UPDATED =
+            "com.sam_chordas.android.stockhawk.ACTION_DATA_UPDATED";
 
     public StockTaskService() {
     }
@@ -70,8 +75,8 @@ public class StockTaskService extends GcmTaskService {
         if (params.getTag().equals("init") || params.getTag().equals("periodic")) {
             isUpdate = true;
             //delete existing data
-            mContext.getContentResolver().delete(QuoteProvider.Quotes.CONTENT_URI,
-                    null, null);
+//            mContext.getContentResolver().delete(QuoteProvider.Quotes.CONTENT_URI,
+//                    null, null);
 
             initQueryCursor = mContext.getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                     new String[]{"Distinct " + QuoteColumns.SYMBOL}, null,
@@ -123,7 +128,7 @@ public class StockTaskService extends GcmTaskService {
             urlString = urlStringBuilder.toString();
             try {
                 getResponse = fetchData(urlString);
-                Log.d(LOG_TAG, "rkakadia urlString: " +urlString);
+                Log.d(LOG_TAG, "rkakadia urlString: " + urlString);
 
                 result = GcmNetworkManager.RESULT_SUCCESS;
                 try {
@@ -137,8 +142,12 @@ public class StockTaskService extends GcmTaskService {
                     //Check the response
                     mContentProviderResult = mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
                             Utils.quoteJsonToContentVals(getResponse));
+                    //Update widget
+                    updateWidgets();
+
                     if (mContentProviderResult.length > 0) {
                         Log.d(LOG_TAG, "rkakadia Stock results found " + mContentProviderResult.length);
+
                     } else {
                         Log.d(LOG_TAG, "rkakadia Stock results are not found " + mContentProviderResult.length);
                         result = GcmNetworkManager.RESULT_FAILURE;
@@ -153,7 +162,18 @@ public class StockTaskService extends GcmTaskService {
             Log.d(LOG_TAG, "Invalid stock option");
         }
 
+        Intent dataUpdatedIntent = new Intent(MyStocksActivity.ACTION_DATA_UPDATE).setPackage(mContext.getPackageName());
+        mContext.sendBroadcast(dataUpdatedIntent);
+
         return result;
+    }
+
+    private void updateWidgets() {
+        Log.d(LOG_TAG, "rkakadia widget broadcast updateWidgets()");
+        Context context = mContext;
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
     }
 
 }
