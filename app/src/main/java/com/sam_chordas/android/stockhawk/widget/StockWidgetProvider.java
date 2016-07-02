@@ -53,31 +53,25 @@ public class StockWidgetProvider extends AppWidgetProvider {
         //context.startService(new Intent(context, StockWidgetIntentService.class));
 
         for (int i = 0; i < appWidgetIDs.length; i++) {
+            //put old code here
+        }
 
+        for (int appWidgetId : appWidgetIDs) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
             // Create an Intent to launch MainActivity
-            Intent intentMain = new Intent(context, MyStocksActivity.class);
-            PendingIntent pendingIntentMain = PendingIntent.getActivity(context, 0, intentMain, 0);
-            views.setOnClickPendingIntent(R.id.widget_header_frame, pendingIntentMain);
+            Intent intent = new Intent(context, MyStocksActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            views.setOnClickPendingIntent(R.id.widget_header_frame, pendingIntent);
 
-            Intent intent = new Intent(context, StockWidgetIntentService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIDs[i]);
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-
-            views.setRemoteAdapter(appWidgetIDs[i], R.id.widget_list_view, intent);
-            //views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
-
-            Intent SIntent = new Intent(context, StockWidgetProvider.class);
-            SIntent.setAction(StockWidgetProvider.INTENT_ACTION);
-            SIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIDs[i]);
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, SIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            views.setOnClickPendingIntent(R.id.widget_header_frame, pendingIntent);//new
-
-            boolean useDetailActivity = context.getResources().getBoolean(R.bool.use_detail_activity);
+            // Set up the collection
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                setRemoteAdapter(context, views);
+            } else {
+                setRemoteAdapterV11(context, views);
+            }
+            boolean useDetailActivity = context.getResources()
+                    .getBoolean(R.bool.use_detail_activity);
             Intent clickIntentTemplate = useDetailActivity
                     ? new Intent(context, StockDetailsActivity.class)
                     : new Intent(context, MyStocksActivity.class);
@@ -85,11 +79,10 @@ public class StockWidgetProvider extends AppWidgetProvider {
                     .addNextIntentWithParentStack(clickIntentTemplate)
                     .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setPendingIntentTemplate(R.id.widget_list_view, clickPendingIntentTemplate);
-            views.setEmptyView(R.id.widget_list_view, R.id.empty_view);
+            views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
 
-            views.setPendingIntentTemplate(R.id.widget_list_view, pendingIntent);
-
-            appWidgetManager.updateAppWidget(appWidgetIDs[i], views);
+            // Tell the AppWidgetManager to perform an update on the current app widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
 
