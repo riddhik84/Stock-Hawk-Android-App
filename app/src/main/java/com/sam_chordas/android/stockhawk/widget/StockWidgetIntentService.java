@@ -73,6 +73,12 @@ public class StockWidgetIntentService extends RemoteViewsService {
             );
 
             Log.d(LOG_TAG, "rkakadia StockRemoteViewsFactory onDataSetChanged cursor count " + cursor.getCount());
+
+            RemoteViews remoteViews = new RemoteViews(this.context.getPackageName(), R.layout.list_item_quote);
+            if (cursor.getCount() == 0) {
+                remoteViews.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
+                remoteViews.setTextViewText(R.id.widget_empty_view, getResources().getString(R.string.no_quotes_info));
+            }
         }
 
         @Override

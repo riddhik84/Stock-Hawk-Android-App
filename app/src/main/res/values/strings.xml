@@ -26,4 +26,7 @@
     <string name="company_name_text">Company Name:</string>
     <string name="prev_close_price_text">Previous Close Price:</string>
 
+    <string name="high_52_wk_text">52 Week High:</string>
+    <string name="low_52_wk_text">52 Week Low:</string>
+
 </resources>

@@ -66,7 +66,7 @@ public class StockWidgetProvider extends AppWidgetProvider {
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
             views.setRemoteAdapter(appWidgetIDs[i], R.id.widget_list_view, intent);
-            views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
+            //views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_view);
 
             Intent SIntent = new Intent(context, StockWidgetProvider.class);
             SIntent.setAction(StockWidgetProvider.INTENT_ACTION);

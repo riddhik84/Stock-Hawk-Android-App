@@ -10,9 +10,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -24,8 +27,10 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.sam_chordas.android.stockhawk.sync.HttpRequestResponse;
 import com.sam_chordas.android.stockhawk.sync.StockHistoryParcelable;
+import com.squareup.okhttp.internal.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,33 +41,40 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class StockDetailsActivity extends Activity {
+public class StockDetailsActivity extends AppCompatActivity {
 
     final static String LOG_TAG = StockDetailsActivity.class.getSimpleName();
     LineChart lineChart;
     TextView quoteNameTV;
     TextView companyNameTV;
     TextView prevClosePriceTV;
+    TextView high52wkTV;
+    TextView low52wkTV;
 
     String symbol = "";
     String companyName = "";
     String prevClosePrice = "";
     String currency = "";
+    String high_52wk = "";
+    String low_52wk = "";
+//    String open = "";
+//    String high = "";
+//    String low = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_details);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        forceRTLIfSupported();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         quoteNameTV = (TextView) findViewById(R.id.quote_name);
         companyNameTV = (TextView) findViewById(R.id.company_name);
         prevClosePriceTV = (TextView) findViewById(R.id.prev_close_price);
+        high52wkTV = (TextView) findViewById(R.id.high_52_wk);
+        low52wkTV = (TextView) findViewById(R.id.low_52_wk);
 
         Intent intent = getIntent();
-        //int position = intent.getIntExtra("position", 0);
         symbol = intent.getStringExtra("symbol");
         Log.d(LOG_TAG, "rkakadia position received in stockdetails : " + symbol);
 
@@ -70,8 +82,19 @@ public class StockDetailsActivity extends Activity {
             quoteNameTV.setText(symbol);
         }
 
-        StockAsyncTask s = new StockAsyncTask(this);
-        s.execute(symbol);
+        if (Utils.isNetworkConnected(this)) {
+            StockAsyncTask s = new StockAsyncTask(this);
+            s.execute(symbol);
+        } else {
+            companyNameTV.setVisibility(View.INVISIBLE);
+            prevClosePriceTV.setVisibility(View.INVISIBLE);
+            high52wkTV.setVisibility(View.INVISIBLE);
+            low52wkTV.setVisibility(View.INVISIBLE);
+            //lineChart.setVisibility(View.INVISIBLE);
+
+            Toast.makeText(this, getString(R.string.no_network_info), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     //Format date
@@ -165,6 +188,11 @@ public class StockDetailsActivity extends Activity {
                 final String COMPANY_NAME = "Company-Name";
                 final String PREV_CLOSE_PRICE = "previous_close_price";
                 final String CURRENCY = "currency";
+                final String RANGES = "ranges";
+                final String RANGES_HIGH = "high";
+                final String RANGES_HIGH_MAX = "max";
+                final String RANGES_LOW = "low";
+                final String RANGES_LOW_MIN = "min";
 
                 String json_string = jsonResponseString.substring(jsonResponseString.indexOf("(") + 1, jsonResponseString.lastIndexOf(")"));
                 JSONObject in = new JSONObject(json_string);
@@ -179,10 +207,19 @@ public class StockDetailsActivity extends Activity {
                 currency = meta.getString(CURRENCY);
                 Log.d(LOG_TAG, "rkakadia currency: " + currency);
 
+                JSONObject ranges = in.getJSONObject(RANGES);
+                JSONObject ranges_high = ranges.getJSONObject(RANGES_HIGH);
+                high_52wk = ranges_high.getString(RANGES_HIGH_MAX);
+                Log.d(LOG_TAG, "rkakadia high_52wk: " + high_52wk);
+
+                JSONObject ranges_low = ranges.getJSONObject(RANGES_LOW);
+                low_52wk = ranges_low.getString(RANGES_LOW_MIN);
+                Log.d(LOG_TAG, "rkakadia low_52wk: " + low_52wk);
+
                 JSONArray stockArray = in.getJSONArray(SERIES);
                 Log.d(LOG_TAG, "rkakadia JSON array length " + stockArray.length());
 
-                for (int i = 0; i < stockArray.length(); i += 30) {
+                for (int i = 0; i < stockArray.length(); i += 20) {
                     JSONObject stockEntry = stockArray.getJSONObject(i);
                     String date = stockEntry.getString(DATE);
                     double close = stockEntry.getDouble(CLOSE);
@@ -201,7 +238,10 @@ public class StockDetailsActivity extends Activity {
             super.onPostExecute(SHP);
 
             companyNameTV.setText(companyNameTV.getText() + " " + companyName);
+            getSupportActionBar().setTitle(companyName);
             prevClosePriceTV.setText(prevClosePriceTV.getText() + " " + prevClosePrice + " " + currency);
+            high52wkTV.setText(high52wkTV.getText() + " " + high_52wk + " " + currency);
+            low52wkTV.setText(low52wkTV.getText() + " " + low_52wk + " " + currency);
 
             ArrayList<StockHistoryParcelable> ArrayList_SHB = new ArrayList<>();
             ArrayList_SHB = SHP;
@@ -247,5 +287,4 @@ public class StockDetailsActivity extends Activity {
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
     }
-
 }
