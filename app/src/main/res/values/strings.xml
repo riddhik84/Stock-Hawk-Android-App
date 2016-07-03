@@ -34,4 +34,6 @@
     <string name="linechart_for" translatable="true">LineChart for </string>
     <string name="stock_values" translatable="true">Stock values</string>
 
+    <string name="fab_desc">Search stock symbol button</string>
+
 </resources>

@@ -27,7 +27,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="left|start"
             android:textColor="@color/material_green_700"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/company_name"
@@ -37,7 +37,7 @@
             android:gravity="left|start"
             android:text="@string/company_name_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/prev_close_price"
@@ -47,7 +47,7 @@
             android:gravity="left|start"
             android:text="@string/prev_close_price_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/high_52_wk"
@@ -57,7 +57,7 @@
             android:gravity="left|start"
             android:text="@string/high_52_wk_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/low_52_wk"
@@ -67,7 +67,7 @@
             android:gravity="left|start"
             android:text="@string/low_52_wk_text"
             android:textColor="@color/material_green_700"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

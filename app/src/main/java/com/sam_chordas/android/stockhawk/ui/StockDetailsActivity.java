@@ -289,6 +289,7 @@ public class StockDetailsActivity extends AppCompatActivity {
             lineChart.setData(data);
             lineChart.animate();
             lineChart.invalidate();
+            lineChart.setContentDescription(getString(R.string.linechart_for) + " " + companyName);
 
 //            Log.d(LOG_TAG, "rkakadia End of execution...");
         }
