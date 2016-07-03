@@ -162,26 +162,28 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                             .input(getString(R.string.input_hint), getString(R.string.input_prefill), new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
-                                    // On FAB click, receive user input. Make sure the stock doesn't already exist
-                                    // in the DB and proceed accordingly
-                                    //Make the input string uppercase to check if the quote already exists
-                                    Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                                            new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
-                                            new String[]{input.toString().toUpperCase()}, null);
-                                    if (c.getCount() != 0) {
+                                    if (input.toString().length() > 0) {
+                                        // On FAB click, receive user input. Make sure the stock doesn't already exist
+                                        // in the DB and proceed accordingly
+                                        //Make the input string uppercase to check if the quote already exists
+                                        Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+                                                new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
+                                                new String[]{input.toString().toUpperCase()}, null);
+                                        if (c.getCount() != 0) {
 //                                        Log.d(LOG_TAG, "rkakadia stock quote exists? " + c.getCount());
-                                        Toast toast =
-                                                Toast.makeText(MyStocksActivity.this, getString(R.string.stock_already_saved_toast),
-                                                        Toast.LENGTH_LONG);
-                                        toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
-                                        toast.show();
-                                        return;
-                                    } else {
-                                        // Add the stock to DB
-                                        mServiceIntent.putExtra("tag", "add");
-                                        mServiceIntent.putExtra(getString(R.string.symbol), input.toString().toUpperCase());
-                                        startService(mServiceIntent);
-                                    }
+                                            Toast toast =
+                                                    Toast.makeText(MyStocksActivity.this, getString(R.string.stock_already_saved_toast),
+                                                            Toast.LENGTH_LONG);
+                                            toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
+                                            toast.show();
+                                            return;
+                                        } else {
+                                            // Add the stock to DB
+                                            mServiceIntent.putExtra("tag", "add");
+                                            mServiceIntent.putExtra(getString(R.string.symbol), input.toString().toUpperCase());
+                                            startService(mServiceIntent);
+                                        }
+                                    }//
                                 }
                             })
                             .show();
