@@ -30,19 +30,20 @@ public class StockIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(LOG_TAG, "Stock Intent Service");
+//        Log.d(LOG_TAG, "Stock Intent Service");
+
         StockTaskService stockTaskService = new StockTaskService(this);
         Bundle args = new Bundle();
         if (intent.getStringExtra("tag").equals("add")) {
-            Log.d(LOG_TAG, "rkakadia tag is add");
-            args.putString("symbol", intent.getStringExtra("symbol"));
+//            Log.d(LOG_TAG, "rkakadia tag is add");
+            args.putString(getString(R.string.symbol), intent.getStringExtra(getString(R.string.symbol)));
         }
         // We can call OnRunTask from the intent service to force it to run immediately instead of
         // scheduling a task.
         int result = stockTaskService.onRunTask(new TaskParams(intent.getStringExtra("tag"), args));
-        Log.d(LOG_TAG, "rkakadia result " +result);
+//        Log.d(LOG_TAG, "rkakadia result " +result);
 
-        if(result == 2){
+        if (result == 2) {
             mHandler.post(new DisplayToast(this, getString(R.string.incorrect_stock_toast)));
         }
     }

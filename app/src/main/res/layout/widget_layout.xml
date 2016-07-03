@@ -8,14 +8,17 @@
         android:id="@+id/widget_header_frame"
         android:layout_width="match_parent"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
-        android:background="@color/material_blue_500">
+        android:background="@color/material_blue_500"
+        android:gravity="left|start">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_name"
-            android:gravity="left"
+            android:id="@+id/widget_header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:gravity="left|start"
             android:text="@string/app_name"
             android:textSize="20dp" />
     </FrameLayout>
@@ -23,15 +26,15 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/md_divider_black">
+        android:layout_weight="1">
 
         <ListView
             android:id="@+id/widget_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="0dp"
+            android:background="@color/material_grey_800"
+            android:divider="@color/material_grey_400"
+            android:dividerHeight="1dp"
             tools:listitem="@layout/widget_list_item_quote" />
 
         <TextView
@@ -43,6 +46,5 @@
             android:textColor="@color/material_red_700"
             android:textSize="20dp" />
     </FrameLayout>
-
 
 </LinearLayout>

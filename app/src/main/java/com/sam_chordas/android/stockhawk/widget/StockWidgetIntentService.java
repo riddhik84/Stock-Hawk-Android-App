@@ -63,7 +63,7 @@ public class StockWidgetIntentService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            Log.d(LOG_TAG, "rkakadia StockRemoteViewsFactory onDataSetChanged");
+//            Log.d(LOG_TAG, "rkakadia StockRemoteViewsFactory onDataSetChanged");
             cursor = getContentResolver().query(
                     QuoteProvider.Quotes.CONTENT_URI,
                     STOCK_COLUMNS,
@@ -72,7 +72,7 @@ public class StockWidgetIntentService extends RemoteViewsService {
                     null
             );
 
-            Log.d(LOG_TAG, "rkakadia StockRemoteViewsFactory onDataSetChanged cursor count " + cursor.getCount());
+//            Log.d(LOG_TAG, "rkakadia StockRemoteViewsFactory onDataSetChanged cursor count " + cursor.getCount());
 
             RemoteViews remoteViews = new RemoteViews(this.context.getPackageName(), R.layout.list_item_quote);
             if (cursor.getCount() == 0) {

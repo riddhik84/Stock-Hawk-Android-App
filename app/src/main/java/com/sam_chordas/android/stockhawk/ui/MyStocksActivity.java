@@ -30,6 +30,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.rest.DividerItemDecoration;
 import com.sam_chordas.android.stockhawk.rest.QuoteCursorAdapter;
 import com.sam_chordas.android.stockhawk.rest.RecyclerViewItemClickListener;
 import com.sam_chordas.android.stockhawk.rest.Utils;
@@ -44,6 +45,9 @@ import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallb
 import org.w3c.dom.Text;
 
 import java.util.Locale;
+
+import butterknife.BindString;
+import butterknife.ButterKnife;
 
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -65,8 +69,26 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
     private Cursor mCursor;
-    //boolean isConnected;
     TextView emptyView;
+
+//    @BindString(R.string.symbol_search)
+//    String symbolsearch;
+//    @BindString(R.string.content_test)
+//    String content_test;
+//    @BindString(R.string.input_hint)
+//    String input_hint;
+//    @BindString(R.string.input_prefill)
+//    String input_prefill;
+//    @BindString(R.string.stock_already_saved_toast)
+//    String stock_already_saved_toast;
+//    @BindString(R.string.network_toast)
+//    String network_toast;
+//    @BindString(R.string.network_info_dialog_title)
+//    String network_info_dialog_title;
+//    @BindString(R.string.no_network_info)
+//    String no_network_info;
+//    @BindString(R.string.no_quotes_info)
+//    String no_quotes_info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +96,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         mContext = this;
 
         setContentView(R.layout.activity_my_stocks);
+//        ButterKnife.bind(this);
+
 //        support RTL
 //        String locale = Locale.getDefault().getDisplayLanguage();
 //        Log.d(LOG_TAG, "rkakadia locale: " + locale);
@@ -85,10 +109,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             // Run the initialize task service so that some stocks appear upon an empty database
             mServiceIntent.putExtra("tag", "init");
             if (Utils.isNetworkConnected(this)) {
-                Log.d(LOG_TAG, "rkakadia  network is connected");
+//                Log.d(LOG_TAG, "rkakadia  network is connected");
                 startService(mServiceIntent);
             } else {
-                Log.d(LOG_TAG, "rkakadia  network is not connected");
+//                Log.d(LOG_TAG, "rkakadia  network is not connected");
                 networkToast();
                 //updateEmptyView();
             }
@@ -106,7 +130,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         //Toast.makeText(mContext, "This is at position " + position, Toast.LENGTH_SHORT).show();
                         if (mCursor.moveToPosition(position)) {
                             Intent stockDetailScreen = new Intent(mContext, StockDetailsActivity.class);
-                            stockDetailScreen.putExtra("symbol", mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL)));
+                            stockDetailScreen.putExtra(getString(R.string.symbol), mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL)));
                             startActivity(stockDetailScreen);
                         }
                     }
@@ -119,6 +143,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 updateEmptyView();
             }
         });
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mCursorAdapter);
 
 
@@ -128,11 +154,11 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             @Override
             public void onClick(View v) {
                 if (Utils.isNetworkConnected(getApplicationContext())) {
-                    new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
-                            .content(R.string.content_test)
+                    new MaterialDialog.Builder(mContext).title(getString(R.string.symbol_search))
+                            .content(getString(R.string.content_test))
                             .itemsGravity(GravityEnum.START)
                             .inputType(InputType.TYPE_CLASS_TEXT)
-                            .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                            .input(getString(R.string.input_hint), getString(R.string.input_prefill), new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
                                     // On FAB click, receive user input. Make sure the stock doesn't already exist
@@ -142,7 +168,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                             new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
                                             new String[]{input.toString().toUpperCase()}, null);
                                     if (c.getCount() != 0) {
-                                        Log.d(LOG_TAG, "rkakadia stock quote exists? " + c.getCount());
+//                                        Log.d(LOG_TAG, "rkakadia stock quote exists? " + c.getCount());
                                         Toast toast =
                                                 Toast.makeText(MyStocksActivity.this, getString(R.string.stock_already_saved_toast),
                                                         Toast.LENGTH_LONG);
@@ -152,7 +178,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                     } else {
                                         // Add the stock to DB
                                         mServiceIntent.putExtra("tag", "add");
-                                        mServiceIntent.putExtra("symbol", input.toString().toUpperCase());
+                                        mServiceIntent.putExtra(getString(R.string.symbol), input.toString().toUpperCase());
                                         startService(mServiceIntent);
                                     }
                                 }
@@ -289,11 +315,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     //RTL language support
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void forceRTLIfSupported() {
-        Log.d(LOG_TAG, "rkakadia forceRTLIfSupported()");
+//        Log.d(LOG_TAG, "rkakadia forceRTLIfSupported()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         }
     }
-
-
 }

@@ -38,7 +38,7 @@ public class StockWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
 
         if (intent.getAction().equals(ACTION_DATA_UPDATED)) {
-            Log.d(LOG_TAG, "rkakadia onReceive ACTION_DATA_UPDATED");
+//            Log.d(LOG_TAG, "rkakadia onReceive ACTION_DATA_UPDATED");
 
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIDs = appWidgetManager.getAppWidgetIds(
@@ -49,7 +49,7 @@ public class StockWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIDs) {
-        Log.d(LOG_TAG, "rkakadia StockWidgetProvider Inside onUpdate()");
+//        Log.d(LOG_TAG, "rkakadia StockWidgetProvider Inside onUpdate()");
         //context.startService(new Intent(context, StockWidgetIntentService.class));
 
         for (int i = 0; i < appWidgetIDs.length; i++) {

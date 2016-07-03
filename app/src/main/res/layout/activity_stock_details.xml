@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,56 +16,55 @@
     <LinearLayout
         android:id="@+id/layout_1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="left|start"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/quote_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:gravity="left|start"
             android:textColor="@color/material_green_700"
             android:textSize="18dp" />
 
         <TextView
             android:id="@+id/company_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
+            android:gravity="left|start"
             android:text="@string/company_name_text"
             android:textColor="@color/material_green_700"
             android:textSize="14dp" />
 
         <TextView
             android:id="@+id/prev_close_price"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
+            android:gravity="left|start"
             android:text="@string/prev_close_price_text"
             android:textColor="@color/material_green_700"
             android:textSize="14dp" />
 
         <TextView
             android:id="@+id/high_52_wk"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
+            android:gravity="left|start"
             android:text="@string/high_52_wk_text"
             android:textColor="@color/material_green_700"
             android:textSize="14dp" />
 
         <TextView
             android:id="@+id/low_52_wk"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginBottom="10dp"
+            android:gravity="left|start"
             android:text="@string/low_52_wk_text"
             android:textColor="@color/material_green_700"
             android:textSize="14dp" />
@@ -76,6 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:background="@color/material_grey_300" />
+        android:background="@color/material_grey_300"
+        android:layoutDirection="rtl" />
 
 </LinearLayout>

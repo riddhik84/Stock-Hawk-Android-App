@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Stock Hawk</string>
+    <string name="app_name" translatable="false">Stock Hawk</string>
 
-    <string name="action_example">Example action</string>
+    <string name="action_example" translatable="false">Example action</string>
 
-    <string name="action_settings" translatable="true">Settings</string>
-    <string name="action_change_units">Change Units</string>
-    <string name="symbol_search">Symbol Search</string>
-    <string name="content_test">Search for a Stock Symbol</string>
-    <string name="input_hint">FB</string>
-    <string name="input_prefill"></string>
-    <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="action_change_units" translatable="false">Change Units</string>
+    <string name="symbol_search" translatable="true">Symbol Search</string>
+    <string name="content_test" translatable="true">Search for a Stock Symbol</string>
+    <string name="input_hint" translatable="false">FB</string>
+    <string name="input_prefill" translatable="false"></string>
+    <string name="network_toast" translatable="true">Uh-oh! This app requires an internet connection</string>
 
-    <string name="incorrect_stock_toast">Incorrect stock quote entered</string>
-    <string name="stock_already_saved_toast">This stock is already saved!</string>
-    <string name="title_activity_stock_details">StockDetailsActivity</string>
+    <string name="incorrect_stock_toast" translatable="true">Incorrect stock quote entered</string>
+    <string name="stock_already_saved_toast" translatable="true">This stock is already saved!</string>
+    <string name="title_activity_stock_details" translatable="false">StockDetailsActivity</string>
 
-    <string name="network_info_dialog_title">Network Info</string>
-    <string name="no_network_info">No network available! Please connect to the network.</string>
-    <string name="no_quotes_info">No stock quotes added.</string>
+    <string name="network_info_dialog_title" translatable="true">Network Info</string>
+    <string name="no_network_info" translatable="true">No network available! Please connect to the network.</string>
+    <string name="no_quotes_info" translatable="true">No stock quotes added.</string>
 
-    <string name="content_authority">com.sam_chordas.android.stockhawk</string>
-    <string name="sync_account_type">stocks.rk.com</string>
+    <string name="content_authority" translatable="false">com.sam_chordas.android.stockhawk</string>
+    <string name="sync_account_type" translatable="false">stocks.rk.com</string>
 
-    <string name="company_name_text">Company Name:</string>
-    <string name="prev_close_price_text">Previous Close Price:</string>
+    <string name="company_name_text" translatable="true">Company Name:</string>
+    <string name="prev_close_price_text" translatable="true">Previous Close Price:</string>
 
-    <string name="high_52_wk_text">52 Week High:</string>
-    <string name="low_52_wk_text">52 Week Low:</string>
+    <string name="high_52_wk_text" translatable="true">52 Week High:</string>
+    <string name="low_52_wk_text" translatable="true">52 Week Low:</string>
+
+    <string name="symbol" translatable="false">symbol</string>
+    <string name="loading_msg" translatable="true">Loading chart...</string>
+    <string name="linechart_for" translatable="true">LineChart for </string>
+    <string name="stock_values" translatable="true">Stock values</string>
 
 </resources>

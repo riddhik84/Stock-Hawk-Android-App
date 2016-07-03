@@ -37,7 +37,7 @@ public class Utils {
     }
 
     public static ArrayList quoteJsonToContentVals(String JSON) {
-        Log.d(LOG_TAG, "rkakadia JSON String: " + JSON);
+//        Log.d(LOG_TAG, "rkakadia JSON String: " + JSON);
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
         JSONObject jsonObject = null;
         JSONArray resultsArray = null;
@@ -51,13 +51,13 @@ public class Utils {
                             .getJSONObject("quote");
                     //Check if data returned parsable values in JSON
                     String dataCheck = jsonObject.getString("Bid");
-                    Log.d(LOG_TAG, "rkakadia Bid value: " + dataCheck);
+//                    Log.d(LOG_TAG, "rkakadia Bid value: " + dataCheck);
                     if (!(dataCheck == "null")) {
-                        Log.d(LOG_TAG, "rkakadia Inside value is not null: " + dataCheck);
+//                        Log.d(LOG_TAG, "rkakadia Inside value is not null: " + dataCheck);
                         batchOperations.add(buildBatchOperation(jsonObject));
                     } else {
-                        Log.d(LOG_TAG, "rkakadia Inside value is null: " + dataCheck);
-                        Log.e(LOG_TAG, "rkakadia Incorrect value entered");
+//                        Log.d(LOG_TAG, "rkakadia Inside value is null: " + dataCheck);
+                        Log.e(LOG_TAG, "Incorrect stock option entered");
                     }
                 } else {
                     resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
@@ -79,7 +79,7 @@ public class Utils {
     }
 
     public static String truncateBidPrice(String bidPrice) {
-        Log.d(LOG_TAG, "rkakadia bidprice: " + bidPrice);
+//        Log.d(LOG_TAG, "rkakadia bidprice: " + bidPrice);
 
         if (bidPrice != null)
             bidPrice = String.format("%.2f", Float.parseFloat(bidPrice));

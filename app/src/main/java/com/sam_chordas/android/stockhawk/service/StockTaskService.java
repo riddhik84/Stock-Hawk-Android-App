@@ -83,7 +83,7 @@ public class StockTaskService extends GcmTaskService {
                     null, null);
             if (initQueryCursor.getCount() == 0 || initQueryCursor == null) {
                 // Init task. Populates DB with quotes for the symbols seen below
-                Log.d(LOG_TAG, "rkakadia No data in table Quotes");
+//                Log.d(LOG_TAG, "rkakadia No data in table Quotes");
                 try {
                     urlStringBuilder.append(
                             URLEncoder.encode("\"YHOO\",\"AAPL\",\"GOOG\",\"MSFT\")", "UTF-8"));
@@ -128,7 +128,7 @@ public class StockTaskService extends GcmTaskService {
             urlString = urlStringBuilder.toString();
             try {
                 getResponse = fetchData(urlString);
-                Log.d(LOG_TAG, "rkakadia urlString: " + urlString);
+//                Log.d(LOG_TAG, "rkakadia urlString: " + urlString);
 
                 result = GcmNetworkManager.RESULT_SUCCESS;
                 try {
@@ -146,10 +146,10 @@ public class StockTaskService extends GcmTaskService {
                     updateWidgets();
 
                     if (mContentProviderResult.length > 0) {
-                        Log.d(LOG_TAG, "rkakadia Stock results found " + mContentProviderResult.length);
+//                        Log.d(LOG_TAG, "rkakadia Stock results found " + mContentProviderResult.length);
 
                     } else {
-                        Log.d(LOG_TAG, "rkakadia Stock results are not found " + mContentProviderResult.length);
+//                        Log.d(LOG_TAG, "rkakadia Stock results are not found " + mContentProviderResult.length);
                         result = GcmNetworkManager.RESULT_FAILURE;
                     }
                 } catch (RemoteException | OperationApplicationException e) {
@@ -169,7 +169,8 @@ public class StockTaskService extends GcmTaskService {
     }
 
     private void updateWidgets() {
-        Log.d(LOG_TAG, "rkakadia widget broadcast updateWidgets()");
+//        Log.d(LOG_TAG, "rkakadia widget broadcast updateWidgets()");
+
         Context context = mContext;
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                 .setPackage(context.getPackageName());

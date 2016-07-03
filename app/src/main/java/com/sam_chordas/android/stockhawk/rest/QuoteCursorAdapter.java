@@ -82,7 +82,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
     @Override
     public void onItemDismiss(int position) {
-        Log.d(LOG_TAG, "rkakadia item deleted");
+//        Log.d(LOG_TAG, "rkakadia item deleted");
 
         Cursor c = getCursor();
         c.moveToPosition(position);
@@ -130,7 +130,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     }
 
     private void updateWidgets() {
-        Log.d(LOG_TAG, "rkakadia widget broadcast updateWidgets()");
+//        Log.d(LOG_TAG, "rkakadia widget broadcast updateWidgets()");
         Context context = mContext;
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                 .setPackage(context.getPackageName());

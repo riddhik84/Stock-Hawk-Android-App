@@ -16,4 +16,7 @@
     <dimen name="widget_min_resize_width">220dp</dimen>
     <dimen name="widget_min_resize_height">180dp</dimen>
 
+    <dimen name="padding_price_change">3dp</dimen>
+    <dimen name="padding_bid_price">10sp</dimen>
+
 </resources>
