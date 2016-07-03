@@ -183,7 +183,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                             mServiceIntent.putExtra(getString(R.string.symbol), input.toString().toUpperCase());
                                             startService(mServiceIntent);
                                         }
-                                    }//
+                                    }
                                 }
                             })
                             .show();
